@@ -1,0 +1,48 @@
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS movie;
+DROP TABLE IF EXISTS character;
+DROP TABLE IF EXISTS actor;
+DROP TABLE IF EXISTS role;
+DROP TABLE IF EXISTS appearance;
+
+CREATE TABLE user (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT UNIQUE NOT NULL,
+  email TEXT NOT NULL
+);
+
+CREATE TABLE movie (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT UNIQUE NOT NULL,
+  genre TEXT NOT NULL,
+  created TIMESTAMP NOT NULL
+);
+
+CREATE TABLE character (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  bio TEXT NOT NULL
+);
+
+CREATE TABLE actor (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL
+);
+
+CREATE TABLE appearance (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  character_id INTEGER NOT NULL,
+  movie_id INTEGER NOT NULL,
+  FOREIGN KEY (character_id) REFERENCES character (id),
+  FOREIGN KEY (movie_id) REFERENCES movie (id)
+);
+
+CREATE TABLE role (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  character_id INTEGER NOT NULL,
+  actor_id INTEGER NOT NULL,
+  FOREIGN KEY (character_id) REFERENCES character (id),
+  FOREIGN KEY (actor_id) REFERENCES actor (id)
+);
