@@ -1,20 +1,30 @@
+import click
+from flask import current_app
+from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=False, nullable=False)
-    email = db.Column(db.String(120), unique=False, nullable=False)
+from .models.user import User
+from .models.movie import Movie
 
-    @property
-    def serialize(self):
-       """Return object data in easily serializable format"""
-       return {
-           'id'         : self.id,
-           'username'   : self.username,
-           'email'      : self.email
-       }
+@click.command('drop-db')
+@with_appcontext
+def drop_db_command():
+    db.drop_all()
+    click.echo('Dropped the database')
 
-    def __repr__(self):
-        return '<User %r>' % self.username
+@click.command('create-db')
+@with_appcontext
+def create_db_tables_command():
+    db.create_all()
+    click.echo('Created tables in the database')
+
+def add_cli_commands(app):
+    app.cli.add_command(drop_db_command)
+    app.cli.add_command(create_db_tables_command)
+
+def init_db(app):
+    db.init_app(app)
+    add_cli_commands(app)
+

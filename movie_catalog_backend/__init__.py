@@ -3,7 +3,8 @@ import os
 from flask import Flask, request, make_response, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
-from .db import db, User
+from .db import db, init_db
+from .models.user import User
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -13,13 +14,12 @@ def create_app(test_config=None):
     )
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 
-    db.init_app(app)
+    init_db(app)
 
     if test_config is None:
-        # app.config.from_pyfile('config.py', silent=True)
+        app.config.from_pyfile('config.py', silent=True)
         with app.app_context():
             # from . import routes
-            db.drop_all()
             db.create_all()
     else:
         app.config.from_mapping(test_config)
