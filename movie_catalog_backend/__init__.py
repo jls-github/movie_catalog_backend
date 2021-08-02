@@ -19,8 +19,7 @@ def create_app(test_config=None):
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)
         with app.app_context():
-            from .controllers import user
-            # from . import routes
+            from . import routes
             db.create_all()
     else:
         app.config.from_mapping(test_config)
@@ -29,22 +28,6 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-
-    @app.route('/', methods=['GET'])
-    def user_records():
-        """Create a user via query string parameters."""
-        username = request.args.get('user')
-        email = request.args.get('email')
-        print(email)
-        if username and email:
-            new_user = User(
-                username=username,
-                email=email
-            )
-            db.session.add(new_user)  # Adds new User record to database
-            db.session.commit()  # Commits all changes
-        return make_response(jsonify(users=[i.serialize for i in User.query.all()]))
 
     return app
 
